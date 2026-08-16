@@ -12,7 +12,16 @@ def init_db():
     conn = get_db()
     c = conn.cursor()
     
-    # Users table
+    # 1. Product category table
+    c.execute('''
+        CREATE TABLE IF NOT EXISTS product_category (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL,
+            is_active BOOLEAN DEFAULT 1
+        )
+    ''')
+    
+    # 2. Users table
     c.execute('''
         CREATE TABLE IF NOT EXISTS users (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -24,14 +33,19 @@ def init_db():
         )
     ''')
     
-    # Products table
+    # 3. Products table
     c.execute('''
         CREATE TABLE IF NOT EXISTS products (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name TEXT,
-            type TEXT,
-            price INTEGER,
-            isActive BOOLEAN DEFAULT 1,
-            duration_days INTEGER
+            name TEXT NOT NULL,
+            type TEXT NOT NULL,
+            price INTEGER NOT NULL,
+            duration_days INTEGER NOT NULL,
+            category_id INTEGER,
+            is_active BOOLEAN DEFAULT 1,
+            FOREIGN KEY(category_id) REFERENCES product_category(id)
         )
     ''')
+    
+    conn.commit()
+    conn.close()
